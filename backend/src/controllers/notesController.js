@@ -64,7 +64,7 @@ exports.updateNote = async (req, res)=> {
        );
 
        if (!note){
-        return req.status(404).json({ success: false, message: 'Note not found'});
+        return res.status(404).json({ success: false, message: 'Note not found'});
        }
 
        res.status(200).json({ success: true, note});
