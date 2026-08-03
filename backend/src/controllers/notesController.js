@@ -50,12 +50,16 @@ exports.updateNote = async (req, res)=> {
     try{
        const { title, content } = req.body;
 
-       if(!title && !content) {
+       if(
+        (title === undefined && content === undefined) ||
+        (title !== undefined && (!title || typeof title !== 'string')) ||
+        (content !== undefined && (!content || typeof content !== 'string'))
+      ) {
         return res.status(400).json({ success: false, message: 'Provide title or content to update'});
        }
        const note = await Note.findOneAndUpdate(
         { _id:req.params.id, user:req.userId },
-        { ...(title && { title }), ...(content && { content }) },
+        { ...(title !== undefined && { title }), ...(content !== undefined && { content }) },
         { new: true, runValidators: true }
        );
 
@@ -79,7 +83,7 @@ exports.deleteNote = async (req, res)=> {
         return res.status(404).json({ success: false, message: 'Note not found'});
       }
 
-      res.status(200).json({ success: true, messgage: 'Note deleted successfully'});
+      res.status(200).json({ success: true, message: 'Note deleted successfully'});
     }catch(error){
       console.error(error);
       res.status(500).json({ success: false, message: 'Server error while deleting note'});

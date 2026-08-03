@@ -11,6 +11,15 @@ const {
 
 router.use(protect); 
 
+const mongoose = require('mongoose');
+
+router.param('id', (req,res, next, id)=> {
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ success: false, message: 'Invalid note ID' });
+  }
+  next();
+});
+
 router.post('/', createNote);
 router.get('/', getNotes);
 router.get('/:id', getNoteById);
