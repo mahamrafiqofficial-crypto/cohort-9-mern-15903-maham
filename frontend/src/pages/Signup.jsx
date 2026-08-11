@@ -31,6 +31,7 @@ function Signup() {
       <h2>Sign Up</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <form onSubmit={handleSubmit}>
+        <label htmlFor="name">Name</label>
         <input
           type="text"
           name="name"
@@ -39,6 +40,7 @@ function Signup() {
           onChange={handleChange}
           required
         />
+        <label htmlFor="email">Email</label>
         <input
           type="email"
           name="email"
@@ -47,6 +49,7 @@ function Signup() {
           onChange={handleChange}
           required
         />
+        <label htmlFor="password">Password</label>
         <input
           type="password"
           name="password"
