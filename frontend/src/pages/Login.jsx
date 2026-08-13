@@ -31,7 +31,12 @@ function Login() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2>Welcome Back</h2>
+        <div className="auth-brand">
+          <div className="auth-brand-icon">N</div>
+          <span>Notes</span>
+        </div>
+        <h2>Welcome back</h2>
+        <p className="auth-subtitle">Log in to access your notes</p>
         {error && <p role="alert" className="auth-error">{error}</p>}
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="form-group">
@@ -63,7 +68,7 @@ function Login() {
           </button>
         </form>
         <p className="auth-footer">
-          Don't have an account? <Link to="/signup">Sign Up</Link>
+          Don't have an account? <Link to="/signup">Sign up</Link>
         </p>
       </div>
     </div>

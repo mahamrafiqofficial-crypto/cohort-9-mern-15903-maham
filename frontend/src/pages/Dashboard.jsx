@@ -40,27 +40,37 @@ function Dashboard() {
     navigate('/login');
   };
 
-  if (loading) return <p style={{ textAlign: 'center', marginTop: 40 }}>Loading notes...</p>;
+  if (loading) return <p style={{ textAlign: 'center', marginTop: 60 }}>Loading notes...</p>;
 
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
-        <h2>My Notes</h2>
+        <div className="dashboard-brand">
+          <div className="dashboard-brand-icon">N</div>
+          <div>
+            <h2>My Notes</h2>
+            <p className="dashboard-subtitle">{notes.length} {notes.length === 1 ? 'note' : 'notes'}</p>
+          </div>
+        </div>
         <button className="logout-btn" onClick={handleLogout}>Logout</button>
       </div>
 
-      {error && <p role="alert" style={{ color: '#dc2626', marginBottom: 16 }}>{error}</p>}
+      {error && <p role="alert" className="auth-error" style={{ marginBottom: 20 }}>{error}</p>}
 
       <Link className="new-note-btn" to="/notes/new">+ New Note</Link>
 
       {notes.length === 0 ? (
-        <p className="empty-state">No notes yet. Create your first note!</p>
+        <div className="empty-state">
+          <div className="empty-state-icon">📝</div>
+          <p>No notes yet. Create your first note!</p>
+        </div>
       ) : (
         <ul className="notes-grid">
           {notes.map((note) => (
             <li className="note-card" key={note._id}>
+              <div className="note-card-accent"></div>
               <h3>{note.title}</h3>
-              <p>{note.content.slice(0, 100)}...</p>
+              <p>{note.content.slice(0, 100)}{note.content.length > 100 ? '...' : ''}</p>
               <div className="note-card-actions">
                 <Link to={`/notes/${note._id}`}>Edit</Link>
                 <button onClick={() => handleDelete(note._id)}>Delete</button>

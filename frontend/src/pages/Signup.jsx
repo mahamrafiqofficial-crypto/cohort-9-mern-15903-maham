@@ -30,7 +30,12 @@ function Signup() {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2>Create an Account</h2>
+        <div className="auth-brand">
+          <div className="auth-brand-icon">N</div>
+          <span>Notes</span>
+        </div>
+        <h2>Create an account</h2>
+        <p className="auth-subtitle">Start capturing your ideas today</p>
         {error && <p role="alert" className="auth-error">{error}</p>}
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="form-group">
@@ -70,11 +75,11 @@ function Signup() {
             />
           </div>
           <button className="auth-btn" type="submit" disabled={loading}>
-            {loading ? 'Signing up...' : 'Sign Up'}
+            {loading ? 'Creating account...' : 'Sign Up'}
           </button>
         </form>
         <p className="auth-footer">
-          Already have an account? <Link to="/login">Login</Link>
+          Already have an account? <Link to="/login">Log in</Link>
         </p>
       </div>
     </div>

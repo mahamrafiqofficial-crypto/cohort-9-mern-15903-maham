@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { createNote, updateNote, getNoteById } from '../services/api';
 import './NoteEditor.css';
 
@@ -48,14 +48,18 @@ function NoteEditor() {
 
   return (
     <div className="editor-container">
-      <h2>{isEditMode ? 'Edit Note' : 'New Note'}</h2>
-      {error && <p role="alert" style={{ color: '#dc2626', marginBottom: 16 }}>{error}</p>}
+      <div className="editor-header">
+        <Link className="back-link" to="/dashboard">← Back</Link>
+      </div>
+      <h2 style={{ marginBottom: 20 }}>{isEditMode ? 'Edit Note' : 'New Note'}</h2>
+      {error && <p role="alert" className="auth-error" style={{ marginBottom: 16 }}>{error}</p>}
       <form className="editor-form" onSubmit={handleSubmit}>
         <div>
           <label htmlFor="title">Title</label>
           <input
             type="text"
             id="title"
+            placeholder="Note title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
@@ -66,6 +70,7 @@ function NoteEditor() {
           <label htmlFor="content">Content</label>
           <textarea
             id="content"
+            placeholder="Write your note here..."
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={10}
