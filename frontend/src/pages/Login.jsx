@@ -35,6 +35,7 @@ function Login() {
         <label htmlFor="email">Email</label>
         <input
           type="email"
+          id="email"
           name="email"
           placeholder="Email"
           value={formData.email}
@@ -44,6 +45,7 @@ function Login() {
         <label htmlFor="password">Password</label>
         <input
           type="password"
+          id="password"
           name="password"
           placeholder="Password"
           value={formData.password}
