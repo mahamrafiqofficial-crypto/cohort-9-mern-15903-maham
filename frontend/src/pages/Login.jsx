@@ -75,8 +75,3 @@ function Login() {
   );
 }
 export default Login;
-    </div>
-  );
-}
-
-export default Login;
