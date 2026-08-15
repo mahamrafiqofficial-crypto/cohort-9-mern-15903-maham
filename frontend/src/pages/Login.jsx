@@ -29,7 +29,7 @@ function Login() {
   };
 
   return (
-    <div className="auth-container">
+<div className="auth-container">
       <div className="auth-card">
         <div className="auth-brand">
           <div className="auth-brand-icon">N</div>
@@ -71,6 +71,10 @@ function Login() {
           Don't have an account? <Link to="/signup">Sign up</Link>
         </p>
       </div>
+    </div>
+  );
+}
+export default Login;
     </div>
   );
 }
