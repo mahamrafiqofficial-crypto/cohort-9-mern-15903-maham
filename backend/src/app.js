@@ -7,6 +7,7 @@ const cors = require('cors');
 const pinoHttp = require('pino-http');
 const logger = require('./config/logger');
 const errorHandler = require('./middleware/errorHandler');
+const notFoundHandler = require('./middleware/notFoundHandler');
 
 const app = express();
 app.use(cors());
@@ -16,6 +17,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/notes', notesRoutes);
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
+
+app.use(notFoundHandler);   
+app.use(errorHandler);       
 
 app.use(errorHandler);
 
