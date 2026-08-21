@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const logger = require('../config/logger');
 
 exports.register =async (req , res) => {
     try{
@@ -24,7 +25,7 @@ exports.register =async (req , res) => {
       return res.status(409).json({ success: false, message: 'Email already registered' });
     }
 
-        console.error(error);
+        logger.error({ err: error }, 'Error during user registration');
         res.status(500).json({ success: false, message: 'Server error during registration'});
     }
 };
@@ -56,7 +57,7 @@ exports.login = async (req,res) => {
       });
       res.status(200).json({ success: true, token });
     }catch (error){
-       console.error(error);
+       logger.error({ err: error }, 'Error during login');
        res.status(500).json({ success: false, message: 'Server error during login'});
     
     }
