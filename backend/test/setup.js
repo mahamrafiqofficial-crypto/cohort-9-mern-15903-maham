@@ -1,22 +1,32 @@
 const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
-
-let mongoServer;
 
 exports.mochaHooks = {
   async beforeAll() {
-    mongoServer = await MongoMemoryServer.create();
-    const uri = mongoServer.getUri();
-    await mongoose.connect(uri);
+    try {
+      await mongoose.connect('mongodb://127.0.0.1:27017/notes_app_test');
+    } catch (error) {
+      console.error('Failed to set up test database:', error);
+      throw error;
+    }
   },
   async afterAll() {
-    await mongoose.disconnect();
-    await mongoServer.stop();
+    try {
+      await mongoose.connection.dropDatabase();
+      await mongoose.disconnect();
+    } catch (error) {
+      console.error('Failed to tear down test database:', error);
+      throw error;
+    }
   },
   async afterEach() {
-    const collections = mongoose.connection.collections;
-    for (const key in collections) {
-      await collections[key].deleteMany({});
+    try {
+      const collections = mongoose.connection.collections;
+      for (const key in collections) {
+        await collections[key].deleteMany({});
+      }
+    } catch (error) {
+      console.error('Failed to clean up collections:', error);
+      throw error;
     }
   },
 };
