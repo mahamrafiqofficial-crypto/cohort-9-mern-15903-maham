@@ -1,0 +1,55 @@
+.rte-wrapper {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fafafa;
+}
+
+.rte-toolbar {
+  display: flex;
+  gap: 4px;
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+  background: #f3f4f6;
+}
+
+.rte-toolbar button {
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.rte-toolbar button:hover {
+  background: #e5e7eb;
+}
+
+.rte-toolbar button.active {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  border-color: var(--primary);
+}
+
+.rte-content {
+  padding: 14px;
+  min-height: 200px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.rte-content .ProseMirror {
+  outline: none;
+}
+
+.rte-content ul, .rte-content ol {
+  padding-left: 24px;
+}
+
+.rte-content h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 8px 0;
+}

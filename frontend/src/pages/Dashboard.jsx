@@ -70,7 +70,7 @@ function Dashboard() {
             <li className="note-card" key={note._id}>
               <div className="note-card-accent"></div>
               <h3>{note.title}</h3>
-              <p>{note.content.slice(0, 100)}{note.content.length > 100 ? '...' : ''}</p>
+              <p>{note.content.replace(/<[^>]+>/g, '').slice(0, 100)}...</p>
               <div className="note-card-actions">
                 <Link to={`/notes/${note._id}`}>Edit</Link>
                 <button onClick={() => handleDelete(note._id)}>Delete</button>

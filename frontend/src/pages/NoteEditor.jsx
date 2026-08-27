@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { createNote, updateNote, getNoteById } from '../services/api';
+import RichTextEditor from '../components/RichTextEditor';
 import './NoteEditor.css';
 
 function NoteEditor() {
@@ -66,17 +67,10 @@ function NoteEditor() {
           />
         </div>
 
-        <div>
-          <label htmlFor="content">Content</label>
-          <textarea
-            id="content"
-            placeholder="Write your note here..."
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            rows={10}
-            required
-          />
-        </div>
+       <div>
+  <label htmlFor="content">Content</label>
+  <RichTextEditor content={content} onChange={setContent} />
+</div>
 
         <div className="editor-actions">
           <button className="save-btn" type="submit" disabled={loading}>
