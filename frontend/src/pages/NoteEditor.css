@@ -105,3 +105,44 @@
 .cancel-btn:hover {
   background: #f9fafb;
 }
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .editor-container {
+    padding: 24px 16px;
+  }
+
+  .editor-container h2 {
+    font-size: 20px;
+  }
+
+  .editor-form {
+    padding: 20px 16px;
+  }
+
+  .editor-actions {
+    flex-direction: column;
+  }
+
+  .save-btn,
+  .cancel-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .editor-form input,
+  .editor-form textarea {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  .editor-header {
+    gap: 8px;
+  }
+
+  .back-link {
+    font-size: 13px;
+  }
+}

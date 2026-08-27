@@ -141,3 +141,35 @@
 .auth-footer a {
   font-weight: 600;
 } 
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 32px 22px;
+    border-radius: 14px;
+  }
+
+  .auth-card h2 {
+    font-size: 22px;
+  }
+
+  .auth-brand-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 15px;
+  }
+
+  .auth-brand span {
+    font-size: 16px;
+  }
+
+  .form-group input {
+    font-size: 14px;
+    padding: 11px 12px;
+  }
+
+  .auth-btn {
+    padding: 12px;
+    font-size: 14px;
+  }
+}
