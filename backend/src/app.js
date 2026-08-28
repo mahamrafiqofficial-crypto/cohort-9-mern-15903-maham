@@ -11,9 +11,8 @@ const notFoundHandler = require('./middleware/notFoundHandler');
 
 const app = express();
 app.use(cors({
-  origin: '*',
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin: 'https://notesapp-git-main-mahamrafiqofficial-6292s-projects.vercel.app',
+  credentials: true,
 }));
 app.use(express.json());
 app.use(pinoHttp({ logger }));
