@@ -10,7 +10,10 @@ const errorHandler = require('./middleware/errorHandler');
 const notFoundHandler = require('./middleware/notFoundHandler');
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: ['https://notes-by-maham.vercel.app', 'http://localhost:5173'],
+  credentials: true
+}));
 app.use(express.json());
 app.use(pinoHttp({ logger }));
 app.use('/api/auth', authRoutes);
