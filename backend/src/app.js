@@ -11,7 +11,11 @@ const notFoundHandler = require('./middleware/notFoundHandler');
 
 const app = express();
 app.use(cors({
-  origin: ['https://notes-by-maham.vercel.app', 'http://localhost:5173'],
+  origin: [
+    'https://notes-by-maham.vercel.app',
+    'https://notesapp-git-main-mahamrafiqofficial-6292s-projects.vercel.app',
+    'http://localhost:5173'
+  ],
   credentials: true
 }));
 app.use(express.json());
