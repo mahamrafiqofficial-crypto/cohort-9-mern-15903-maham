@@ -18,19 +18,20 @@ app.use('/api/notes', notesRoutes);
 
 app.get('/health', (req, res) => res.json({ status: 'ok' }));
 
-app.use(notFoundHandler);   
-app.use(errorHandler);       
-
+app.use(notFoundHandler);
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
 
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
-    logger.info('MongoDB connected');
-    app.listen(PORT, () => logger.info(`Server running on port ${PORT}`));
-  })
-  .catch((err) => {
-    logger.error({ err }, 'MongoDB connection error');
-    process.exit(1);
-  });
+let isConnected = false;
+const connectDB = async () => {
+  if (isConnected) return;
+  await mongoose.connect(process.env.MONGODB_URI);
+  isConnected = true;
+  logger.info('MongoDB connected');
+};
+
+connectDB().catch((err) => {
+  logger.error({ err }, 'MongoDB connection error');
+});
+
+module.exports = app;
