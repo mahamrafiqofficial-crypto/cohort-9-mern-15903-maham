@@ -19,26 +19,38 @@ app.use(express.json());
 app.use(pinoHttp({ logger }));
 
 // --- Serverless-friendly MongoDB connection ---
-let isConnected = false;
+let conn = null;
 
 const connectDB = async () => {
-  if (isConnected) return;
+  if (conn && mongoose.connection.readyState === 1) {
+    return conn;
+  }
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
-    isConnected = true;
+    conn = await mongoose.connect(process.env.MONGODB_URI, {
+      bufferCommands: false,
+      serverSelectionTimeoutMS: 30000,
+      socketTimeoutMS: 45000,
+    });
     logger.info('MongoDB connected');
+    return conn;
   } catch (err) {
-    logger.error({ err }, 'MongoDB connection error');
+    conn = null;
+    logger.error({ err: err.message }, 'MongoDB connection error');
     throw err;
   }
 };
 
 app.use(async (req, res, next) => {
+  if (req.path === '/health') return next();
   try {
     await connectDB();
     next();
   } catch (err) {
-    res.status(500).json({ success: false, message: 'Database connection failed' });
+    res.status(500).json({
+      success: false,
+      message: 'Database connection failed',
+      detail: err.message,
+    });
   }
 });
 // --- End DB connection block ---
