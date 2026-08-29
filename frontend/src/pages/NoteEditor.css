@@ -105,3 +105,48 @@
 .cancel-btn:hover {
   background: #f9fafb;
 }
+
+.editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.saved-indicator {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.editor-meta-row {
+  display: flex;
+  gap: 16px;
+}
+
+.editor-meta-row > div {
+  flex: 1;
+}
+
+.color-picker {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.color-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  cursor: pointer;
+}
+
+.color-swatch.selected {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary);
+}
+
+@media (max-width: 600px) {
+  .editor-meta-row {
+    flex-direction: column;
+  }
+}

@@ -7,13 +7,16 @@ const {
   getNoteById,
   updateNote,
   deleteNote,
+  togglePin,
+  toggleArchive,
+  duplicateNote,
 } = require('../controllers/notesController');
 
-router.use(protect); 
+router.use(protect);
 
 const mongoose = require('mongoose');
 
-router.param('id', (req,res, next, id)=> {
+router.param('id', (req, res, next, id) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ success: false, message: 'Invalid note ID' });
   }
@@ -25,5 +28,8 @@ router.get('/', getNotes);
 router.get('/:id', getNoteById);
 router.put('/:id', updateNote);
 router.delete('/:id', deleteNote);
+router.patch('/:id/pin', togglePin);
+router.patch('/:id/archive', toggleArchive);
+router.post('/:id/duplicate', duplicateNote);
 
 module.exports = router;
