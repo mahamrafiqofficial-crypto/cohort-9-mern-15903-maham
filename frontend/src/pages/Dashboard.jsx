@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { getNotes, deleteNote, togglePinNote, duplicateNote } from '../services/api';
+import ThemeToggle from '../components/ThemeToggle';
 import './Dashboard.css';
 
 function Dashboard() {
@@ -86,6 +87,7 @@ function Dashboard() {
           </div>
         </div>
         <div className="dashboard-header-actions">
+          <ThemeToggle />
           <Link className="profile-link" to="/profile">Profile</Link>
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </div>
