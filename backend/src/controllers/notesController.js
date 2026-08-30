@@ -177,3 +177,48 @@ exports.duplicateNote = async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error while duplicating note' });
   }
 };
+
+// Export all notes as JSON
+exports.exportNotes = async (req, res) => {
+  try {
+    const notes = await Note.find({ user: req.userId }).select('-user -__v');
+    res.status(200).json({ success: true, exportedAt: new Date().toISOString(), count: notes.length, notes });
+  } catch (error) {
+    logger.error({ err: error }, 'Error while exporting notes');
+    res.status(500).json({ success: false, message: 'Server error while exporting notes' });
+  }
+};
+
+// Import notes from JSON array
+exports.importNotes = async (req, res) => {
+  try {
+    const { notes } = req.body;
+
+    if (!Array.isArray(notes) || notes.length === 0) {
+      return res.status(400).json({ success: false, message: 'No valid notes found to import' });
+    }
+
+    const toInsert = notes
+      .filter((n) => n && typeof n.title === 'string' && typeof n.content === 'string')
+      .map((n) => ({
+        title: n.title,
+        content: n.content,
+        user: req.userId,
+        category: typeof n.category === 'string' ? n.category : 'General',
+        tags: Array.isArray(n.tags) ? n.tags : [],
+        color: typeof n.color === 'string' ? n.color : '#ffffff',
+        isPinned: false,
+        isArchived: false,
+      }));
+
+    if (toInsert.length === 0) {
+      return res.status(400).json({ success: false, message: 'No valid notes found to import' });
+    }
+
+    const inserted = await Note.insertMany(toInsert);
+    res.status(201).json({ success: true, imported: inserted.length, notes: inserted });
+  } catch (error) {
+    logger.error({ err: error }, 'Error while importing notes');
+    res.status(500).json({ success: false, message: 'Server error while importing notes' });
+  }
+};

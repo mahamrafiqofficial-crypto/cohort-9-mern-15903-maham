@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { getNotes, deleteNote, togglePinNote, duplicateNote } from '../services/api';
+import { getNotes, deleteNote, togglePinNote, duplicateNote, exportNotes, importNotes } from '../services/api';
 import ThemeToggle from '../components/ThemeToggle';
 import './Dashboard.css';
 
@@ -12,6 +12,53 @@ function Dashboard() {
   const [sort, setSort] = useState('newest');
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
+  
+  const fileInputRef = useRef(null);
+  const [importMessage, setImportMessage] = useState('');
+
+  const handleExport = async () => {
+    try {
+      const response = await exportNotes(token);
+      const blob = new Blob([JSON.stringify(response.data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `notes-export-${new Date().toISOString().slice(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setError('Failed to export notes');
+    }
+  };
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleImportFile = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+      const notesToImport = Array.isArray(parsed) ? parsed : parsed.notes;
+
+      if (!Array.isArray(notesToImport)) {
+        setError('Invalid file format');
+        return;
+      }
+
+      const response = await importNotes(notesToImport, token);
+      setImportMessage(`${response.data.imported} notes imported successfully`);
+      setTimeout(() => setImportMessage(''), 3000);
+      fetchNotes(search, sort);
+    } catch (err) {
+      setError('Failed to import notes. Please check the file format.');
+    } finally {
+      e.target.value = '';
+    }
+  };
 
   const fetchNotes = useCallback(async (q, sortValue) => {
     try {
@@ -92,6 +139,8 @@ function Dashboard() {
       </div>
 
       {error && <p role="alert" className="auth-error" style={{ marginBottom: 20 }}>{error}</p>}
+      {error && <p role="alert" className="auth-error" style={{ marginBottom: 20 }}>{error}</p>}
+{importMessage && <p className="profile-success" style={{ marginBottom: 20 }}>✓ {importMessage}</p>}
 
       <div className="dashboard-toolbar">
         <input
@@ -137,12 +186,14 @@ function Dashboard() {
                   ))}
                 </div>
               )}
-              <div className="note-card-actions">
-                <Link to={`/notes/${note._id}`}>Edit</Link>
-                <button onClick={() => handlePin(note._id)}>{note.isPinned ? 'Unpin' : 'Pin'}</button>
-                <button onClick={() => handleDuplicate(note._id)}>Duplicate</button>
-                <button onClick={() => handleDelete(note._id)}>Delete</button>
-              </div>
+              <div className="dashboard-header-actions">
+  <ThemeToggle />
+  <button className="io-btn" onClick={handleExport} title="Export notes">Export</button>
+  <button className="io-btn" onClick={handleImportClick} title="Import notes">Import</button>
+  <input type="file" accept=".json" ref={fileInputRef} onChange={handleImportFile} style={{ display: 'none' }} />
+  <Link className="profile-link" to="/profile">Profile</Link>
+  <button className="logout-btn" onClick={handleLogout}>Logout</button>
+</div>
             </li>
           ))}
         </ul>

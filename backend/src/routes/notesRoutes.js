@@ -10,11 +10,17 @@ const {
   togglePin,
   toggleArchive,
   duplicateNote,
+  exportNotes,
+  importNotes,
 } = require('../controllers/notesController');
 
 router.use(protect);
 
 const mongoose = require('mongoose');
+
+// Specific routes BEFORE /:id param routes
+router.get('/export', exportNotes);
+router.post('/import', importNotes);
 
 router.param('id', (req, res, next, id) => {
   if (!mongoose.Types.ObjectId.isValid(id)) {
