@@ -38,3 +38,9 @@ export const toggleArchiveNote = (id, token) =>
 
 export const duplicateNote = (id, token) =>
   api.post(`/notes/${id}/duplicate`, {}, { headers: { Authorization: `Bearer ${token}` } });
+
+export const exportNotes = (token) =>
+  api.get('/notes/export', { headers: { Authorization: `Bearer ${token}` } });
+
+export const importNotes = (notes, token) =>
+  api.post('/notes/import', { notes }, { headers: { Authorization: `Bearer ${token}` } });

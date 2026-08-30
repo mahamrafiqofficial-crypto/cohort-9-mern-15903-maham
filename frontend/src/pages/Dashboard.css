@@ -232,3 +232,17 @@
     flex-direction: column;
   }
 }
+
+.io-btn {
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  padding: 9px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.io-btn:hover {
+  border-color: var(--primary);
+}

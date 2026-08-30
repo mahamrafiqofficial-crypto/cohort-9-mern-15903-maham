@@ -76,7 +76,12 @@ exports.getProfile = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
   try {
-    const { name, phone, location, bio } = req.body;
+    const { name, phone, location, bio, avatar } = req.body;
+
+    if (avatar && avatar.length > 1_500_000) {
+      return res.status(400).json({ success: false, message: 'Image too large. Please choose a smaller photo.' });
+    }
+
     const user = await User.findByIdAndUpdate(
       req.userId,
       {
@@ -84,6 +89,7 @@ exports.updateProfile = async (req, res) => {
         ...(phone !== undefined && { phone }),
         ...(location !== undefined && { location }),
         ...(bio !== undefined && { bio }),
+        ...(avatar !== undefined && { avatar }),
       },
       { new: true, runValidators: true }
     ).select('-password');
