@@ -106,7 +106,7 @@
   background: #f9fafb;
 }
 
- develop
+ 
 .editor-header {
   display: flex;
   justify-content: space-between;
@@ -149,6 +149,8 @@
 @media (max-width: 600px) {
   .editor-meta-row {
     flex-direction: column;
+  }
+}
 
 /* ===== MOBILE RESPONSIVE ===== */
 @media (max-width: 768px) {
@@ -188,6 +190,5 @@
 
   .back-link {
     font-size: 13px;
- develop
   }
 }
