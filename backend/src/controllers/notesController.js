@@ -4,14 +4,21 @@ const logger = require('../config/logger');
 // Create a new note
 exports.createNote = async (req, res) => {
   try {
-    const { title, content } = req.body;
+    const { title, content, category, tags, color } = req.body;
 
     if (!title || typeof title !== 'string' ||
         !content || typeof content !== 'string') {
       return res.status(400).json({ success: false, message: 'Title and content are required' });
     }
 
-    const note = await Note.create({ title, content, user: req.userId });
+    const note = await Note.create({
+      title,
+      content,
+      user: req.userId,
+      ...(category !== undefined && { category }),
+      ...(Array.isArray(tags) && { tags }),
+      ...(color !== undefined && { color }),
+    });
     res.status(201).json({ success: true, note });
   } catch (error) {
     logger.error({ err: error }, 'Error while creating note');
@@ -19,10 +26,30 @@ exports.createNote = async (req, res) => {
   }
 };
 
-// Get all notes for logged-in user
+// Get all notes for logged-in user (with search, sort, filter)
 exports.getNotes = async (req, res) => {
   try {
-    const notes = await Note.find({ user: req.userId }).sort({ createdAt: -1 });
+    const { q, sort, category, tag, archived } = req.query;
+
+    const filter = { user: req.userId };
+
+    if (archived === 'true') {
+      filter.isArchived = true;
+    } else {
+      // default: hide archived notes from main list
+      filter.isArchived = { $ne: true };
+    }
+
+    if (category) filter.category = category;
+    if (tag) filter.tags = tag;
+    if (q && q.trim()) filter.$text = { $search: q.trim() };
+
+    let sortOption = { isPinned: -1, createdAt: -1 }; // default: pinned first, newest first
+    if (sort === 'oldest') sortOption = { isPinned: -1, createdAt: 1 };
+    else if (sort === 'title') sortOption = { isPinned: -1, title: 1 };
+    else if (sort === 'edited') sortOption = { isPinned: -1, updatedAt: -1 };
+
+    const notes = await Note.find(filter).sort(sortOption);
     res.status(200).json({ success: true, notes });
   } catch (error) {
     logger.error({ err: error }, 'Error while fetching notes');
@@ -49,18 +76,24 @@ exports.getNoteById = async (req, res) => {
 // Update a note
 exports.updateNote = async (req, res) => {
   try {
-    const { title, content } = req.body;
+    const { title, content, category, tags, color } = req.body;
 
     if (
-      (title === undefined && content === undefined) ||
+      (title === undefined && content === undefined && category === undefined && tags === undefined && color === undefined) ||
       (title !== undefined && (!title || typeof title !== 'string')) ||
       (content !== undefined && (!content || typeof content !== 'string'))
     ) {
-      return res.status(400).json({ success: false, message: 'Provide title or content to update' });
+      return res.status(400).json({ success: false, message: 'Provide fields to update' });
     }
     const note = await Note.findOneAndUpdate(
       { _id: req.params.id, user: req.userId },
-      { ...(title !== undefined && { title }), ...(content !== undefined && { content }) },
+      {
+        ...(title !== undefined && { title }),
+        ...(content !== undefined && { content }),
+        ...(category !== undefined && { category }),
+        ...(Array.isArray(tags) && { tags }),
+        ...(color !== undefined && { color }),
+      },
       { new: true, runValidators: true }
     );
 
@@ -88,5 +121,59 @@ exports.deleteNote = async (req, res) => {
   } catch (error) {
     logger.error({ err: error }, 'Error while deleting note');
     res.status(500).json({ success: false, message: 'Server error while deleting note' });
+  }
+};
+
+// Toggle pin
+exports.togglePin = async (req, res) => {
+  try {
+    const note = await Note.findOne({ _id: req.params.id, user: req.userId });
+    if (!note) return res.status(404).json({ success: false, message: 'Note not found' });
+
+    note.isPinned = !note.isPinned;
+    await note.save();
+    res.status(200).json({ success: true, note });
+  } catch (error) {
+    logger.error({ err: error }, 'Error while toggling pin');
+    res.status(500).json({ success: false, message: 'Server error while toggling pin' });
+  }
+};
+
+// Toggle archive
+exports.toggleArchive = async (req, res) => {
+  try {
+    const note = await Note.findOne({ _id: req.params.id, user: req.userId });
+    if (!note) return res.status(404).json({ success: false, message: 'Note not found' });
+
+    note.isArchived = !note.isArchived;
+    await note.save();
+    res.status(200).json({ success: true, note });
+  } catch (error) {
+    logger.error({ err: error }, 'Error while toggling archive');
+    res.status(500).json({ success: false, message: 'Server error while toggling archive' });
+  }
+};
+
+// Duplicate a note
+exports.duplicateNote = async (req, res) => {
+  try {
+    const original = await Note.findOne({ _id: req.params.id, user: req.userId });
+    if (!original) return res.status(404).json({ success: false, message: 'Note not found' });
+
+    const copy = await Note.create({
+      title: `${original.title} (Copy)`,
+      content: original.content,
+      user: req.userId,
+      category: original.category,
+      tags: original.tags,
+      color: original.color,
+      isPinned: false,
+      isArchived: false,
+    });
+
+    res.status(201).json({ success: true, note: copy });
+  } catch (error) {
+    logger.error({ err: error }, 'Error while duplicating note');
+    res.status(500).json({ success: false, message: 'Server error while duplicating note' });
   }
 };

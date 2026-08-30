@@ -62,3 +62,36 @@ exports.login = async (req,res) => {
     
     }
 };
+
+exports.getProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId).select('-password');
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    logger.error({ err: error }, 'Error while fetching profile');
+    res.status(500).json({ success: false, message: 'Server error while fetching profile' });
+  }
+};
+
+exports.updateProfile = async (req, res) => {
+  try {
+    const { name, phone, location, bio } = req.body;
+    const user = await User.findByIdAndUpdate(
+      req.userId,
+      {
+        ...(name !== undefined && { name }),
+        ...(phone !== undefined && { phone }),
+        ...(location !== undefined && { location }),
+        ...(bio !== undefined && { bio }),
+      },
+      { new: true, runValidators: true }
+    ).select('-password');
+
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    logger.error({ err: error }, 'Error while updating profile');
+    res.status(500).json({ success: false, message: 'Server error while updating profile' });
+  }
+};
