@@ -12,7 +12,6 @@ function Dashboard() {
   const [sort, setSort] = useState('newest');
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
-  
   const fileInputRef = useRef(null);
   const [importMessage, setImportMessage] = useState('');
 
@@ -133,14 +132,16 @@ function Dashboard() {
         </div>
         <div className="dashboard-header-actions">
           <ThemeToggle />
+          <button className="io-btn" onClick={handleExport} title="Export notes">Export</button>
+          <button className="io-btn" onClick={handleImportClick} title="Import notes">Import</button>
+          <input type="file" accept=".json" ref={fileInputRef} onChange={handleImportFile} style={{ display: 'none' }} />
           <Link className="profile-link" to="/profile">Profile</Link>
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </div>
       </div>
 
       {error && <p role="alert" className="auth-error" style={{ marginBottom: 20 }}>{error}</p>}
-      {error && <p role="alert" className="auth-error" style={{ marginBottom: 20 }}>{error}</p>}
-{importMessage && <p className="profile-success" style={{ marginBottom: 20 }}>✓ {importMessage}</p>}
+      {importMessage && <p className="profile-success" style={{ marginBottom: 20 }}>✓ {importMessage}</p>}
 
       <div className="dashboard-toolbar">
         <input
@@ -186,14 +187,12 @@ function Dashboard() {
                   ))}
                 </div>
               )}
-              <div className="dashboard-header-actions">
-  <ThemeToggle />
-  <button className="io-btn" onClick={handleExport} title="Export notes">Export</button>
-  <button className="io-btn" onClick={handleImportClick} title="Import notes">Import</button>
-  <input type="file" accept=".json" ref={fileInputRef} onChange={handleImportFile} style={{ display: 'none' }} />
-  <Link className="profile-link" to="/profile">Profile</Link>
-  <button className="logout-btn" onClick={handleLogout}>Logout</button>
-</div>
+              <div className="note-card-actions">
+                <Link to={`/notes/${note._id}`}>Edit</Link>
+                <button onClick={() => handlePin(note._id)}>{note.isPinned ? 'Unpin' : 'Pin'}</button>
+                <button onClick={() => handleDuplicate(note._id)}>Duplicate</button>
+                <button onClick={() => handleDelete(note._id)}>Delete</button>
+              </div>
             </li>
           ))}
         </ul>
