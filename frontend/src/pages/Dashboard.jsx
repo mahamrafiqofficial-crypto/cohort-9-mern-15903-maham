@@ -131,7 +131,14 @@ function Dashboard() {
     navigate('/login');
   };
 
-  if (loading) return <div className="dashboard-loading"><div className="spinner"></div></div>;
+  if (loading) {
+  return (
+    <div className="dashboard-loading" role="status" aria-live="polite">
+      <div className="spinner"></div>
+      <span className="sr-only">Loading notes...</span>
+    </div>
+  );
+}
 
   return (
     <div className="dashboard-container">

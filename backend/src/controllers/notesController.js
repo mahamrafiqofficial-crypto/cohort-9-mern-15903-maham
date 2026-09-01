@@ -1,11 +1,12 @@
 const Note = require('../models/note');
+const ALLOWED_COLORS = ['#ffffff', '#fca5a5', '#fdba74', '#fde047', '#86efac', '#93c5fd', '#c4b5fd', '#f9a8d4'];
 const logger = require('../config/logger');
 
 // Create a new note
 exports.createNote = async (req, res) => {
   try {
     const { title, content, category, tags, color } = req.body;
-
+    const safeColor = ALLOWED_COLORS.includes(color) ? color : '#ffffff';
     if (!title || typeof title !== 'string' ||
         !content || typeof content !== 'string') {
       return res.status(400).json({ success: false, message: 'Title and content are required' });
@@ -17,7 +18,7 @@ exports.createNote = async (req, res) => {
       user: req.userId,
       ...(category !== undefined && { category }),
       ...(Array.isArray(tags) && { tags }),
-      ...(color !== undefined && { color }),
+      color: safeColor,
     });
     res.status(201).json({ success: true, note });
   } catch (error) {
@@ -92,7 +93,7 @@ exports.updateNote = async (req, res) => {
         ...(content !== undefined && { content }),
         ...(category !== undefined && { category }),
         ...(Array.isArray(tags) && { tags }),
-        ...(color !== undefined && { color }),
+        color: safeColor,
       },
       { new: true, runValidators: true }
     );
