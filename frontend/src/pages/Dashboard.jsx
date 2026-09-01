@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { getNotes, deleteNote, togglePinNote, duplicateNote, exportNotes, importNotes } from '../services/api';
+import { getNotes, deleteNote, togglePinNote, duplicateNote, exportNotes, importNotes, getProfile } from '../services/api';
 import ThemeToggle from '../components/ThemeToggle';
 import './Dashboard.css';
 
@@ -10,10 +10,23 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('newest');
+  const [profile, setProfile] = useState(null);
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
   const fileInputRef = useRef(null);
   const [importMessage, setImportMessage] = useState('');
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await getProfile(token);
+        setProfile(response.data.user);
+      } catch (err) {
+        // silently ignore, header falls back to default avatar
+      }
+    };
+    fetchProfile();
+  }, [token]);
 
   const handleExport = async () => {
     try {
@@ -118,7 +131,7 @@ function Dashboard() {
     navigate('/login');
   };
 
-  if (loading) return <p style={{ textAlign: 'center', marginTop: 60 }}>Loading notes...</p>;
+  if (loading) return <div className="dashboard-loading"><div className="spinner"></div></div>;
 
   return (
     <div className="dashboard-container">
@@ -132,10 +145,16 @@ function Dashboard() {
         </div>
         <div className="dashboard-header-actions">
           <ThemeToggle />
-          <button className="io-btn" onClick={handleExport} title="Export notes">Export</button>
-          <button className="io-btn" onClick={handleImportClick} title="Import notes">Import</button>
+          <button className="io-btn" onClick={handleExport} title="Export notes">⬇ Export</button>
+          <button className="io-btn" onClick={handleImportClick} title="Import notes">⬆ Import</button>
           <input type="file" accept=".json" ref={fileInputRef} onChange={handleImportFile} style={{ display: 'none' }} />
-          <Link className="profile-link" to="/profile">Profile</Link>
+          <Link className="profile-avatar-link" to="/profile" title="Profile">
+            {profile?.avatar ? (
+              <img src={profile.avatar} alt="Profile" className="header-avatar-img" />
+            ) : (
+              <span className="header-avatar-fallback">{(profile?.name || 'U').charAt(0).toUpperCase()}</span>
+            )}
+          </Link>
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </div>
       </div>
@@ -172,7 +191,7 @@ function Dashboard() {
             <li
               className="note-card"
               key={note._id}
-              style={{ borderLeft: `4px solid ${note.color || 'var(--primary)'}` }}
+              style={{ '--note-color': note.color || '#ffffff' }}
             >
               <div className="note-card-top">
                 <div className="note-card-accent"></div>
