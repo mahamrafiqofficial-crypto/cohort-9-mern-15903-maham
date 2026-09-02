@@ -104,8 +104,11 @@ npm run dev
 ```
 
 ### 3. Frontend Setup
+
+> Open a new terminal at the project root, or from the `backend` folder run `cd ../frontend`.
+
 ```bash
-cd frontend
+cd ../frontend
 npm install
 ```
 
